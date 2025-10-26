@@ -163,5 +163,5 @@ docker compose down
 
 **Name:** Jeremiah Inyiama
 **Slack Handle:** Jerriemiah
-**GitHub:** [Your GitHub Profile Link]
+**GitHub:** https://github.com/Jerriemiah/hng-stage2-bluegreen
 **Date:** October 2025
