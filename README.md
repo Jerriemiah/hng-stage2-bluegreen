@@ -162,6 +162,9 @@ docker compose down
 ## 👨‍💻 Author Information
 
 **Name:** Jeremiah Inyiama
+--
 **Slack Handle:** Jerriemiah
+--
 **GitHub:** https://github.com/Jerriemiah/hng-stage2-bluegreen
+--
 **Date:** October 2025
