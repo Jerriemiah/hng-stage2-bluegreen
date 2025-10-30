@@ -148,3 +148,78 @@
         "upstream_response_time":"0.001",
         "upstream_time":"0.001"
       }
+
+      {
+        "time":"2025-10-30T13:30:02+00:00",
+        "remote_addr":"172.18.0.1",
+        "method":"GET",
+        "uri":"/version",
+        "status":200,
+        "pool":"",
+        "release":"",
+        "upstream_status":"200",
+        "upstream_addr":"172.18.0.3:3000",
+        "request_time":"0.001",
+        "upstream_response_time":"0.001",
+        "upstream_time":"0.001"
+      }
+
+      {
+        "time":"2025-10-30T13:30:02+00:00",
+        "remote_addr":"172.18.0.1",
+        "method":"GET",
+        "uri":"/version",
+        "status":200,
+        "pool":"",
+        "release":"",
+        "upstream_status":"200",
+        "upstream_addr":"172.18.0.3:3000",
+        "request_time":"0.001",
+        "upstream_response_time":"0.001",
+        "upstream_time":"0.001"
+      }
+
+      {
+        "time":"2025-10-30T13:30:02+00:00",
+        "remote_addr":"172.18.0.1",
+        "method":"GET",
+        "uri":"/version",
+        "status":200,
+        "pool":"",
+        "release":"",
+        "upstream_status":"200",
+        "upstream_addr":"172.18.0.3:3000",
+        "request_time":"0.001",
+        "upstream_response_time":"0.001",
+        "upstream_time":"0.001"
+      }
+
+      {
+        "time":"2025-10-30T13:30:02+00:00",
+        "remote_addr":"172.18.0.1",
+        "method":"GET",
+        "uri":"/version",
+        "status":200,
+        "pool":"",
+        "release":"",
+        "upstream_status":"200",
+        "upstream_addr":"172.18.0.3:3000",
+        "request_time":"0.001",
+        "upstream_response_time":"0.001",
+        "upstream_time":"0.001"
+      }
+
+      {
+        "time":"2025-10-30T13:30:02+00:00",
+        "remote_addr":"172.18.0.1",
+        "method":"GET",
+        "uri":"/version",
+        "status":200,
+        "pool":"",
+        "release":"",
+        "upstream_status":"200",
+        "upstream_addr":"172.18.0.3:3000",
+        "request_time":"0.001",
+        "upstream_response_time":"0.001",
+        "upstream_time":"0.001"
+      }
