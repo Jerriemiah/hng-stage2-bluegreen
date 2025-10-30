@@ -99,3 +99,24 @@
 2025/10/30 14:49:54 [info] 20#20: *97 client 172.18.0.1 closed keepalive connection
 2025/10/30 14:49:54 [info] 20#20: *99 client 172.18.0.1 closed keepalive connection
 2025/10/30 14:49:54 [info] 20#20: *101 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *1 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [warn] 20#20: *4 upstream server temporarily disabled while reading response header from upstream, client: 172.18.0.1, server: , request: "GET /version HTTP/1.1", upstream: "http://172.18.0.2:3000/version", host: "localhost:8080"
+2025/10/30 15:12:26 [info] 20#20: *4 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *7 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *9 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *11 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *13 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *15 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *17 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *19 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *21 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *23 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *25 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *27 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *29 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *31 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *33 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *35 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *37 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *39 client 172.18.0.1 closed keepalive connection
+2025/10/30 15:12:26 [info] 20#20: *41 client 172.18.0.1 closed keepalive connection
