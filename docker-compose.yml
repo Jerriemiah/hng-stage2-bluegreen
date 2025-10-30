@@ -48,3 +48,4 @@ services:
       - ./logs/nginx:/var/log/nginx:ro
     depends_on:
       - nginx
+
