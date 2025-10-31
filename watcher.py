@@ -97,6 +97,14 @@ def tail_log():
             check_failover(pool)
             recent_statuses.append(status)
             check_error_rate()
+            
+def check_failover(pool):
+    global last_pool
+    if last_pool and pool != last_pool:
+        post_to_slack(f":rotating_light: Failover detected! Pool switched from {last_pool} → {pool}")
+    elif last_pool == "green" and pool == "blue":
+        post_to_slack(":white_check_mark: Recovery detected — Blue pool serving traffic again.")
+    last_pool = pool
 
 
 if __name__ == "__main__":
