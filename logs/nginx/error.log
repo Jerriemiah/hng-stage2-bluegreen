@@ -546,3 +546,4 @@
 2025/10/31 09:15:28 [info] 20#20: *201 client 172.18.0.1 closed keepalive connection
 2025/10/31 09:29:53 [emerg] 1#1: unknown directive "${FAILOVER_ENABLED:+server" in /etc/nginx/nginx.conf:12
 2025/10/31 09:35:12 [emerg] 1#1: unknown directive "${FAILOVER_ENABLED:+server" in /etc/nginx/nginx.conf:12
+2025/10/31 09:37:37 [emerg] 1#1: unknown directive "${FAILOVER_ENABLED:+server" in /etc/nginx/nginx.conf:12
