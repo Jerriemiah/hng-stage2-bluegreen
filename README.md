@@ -1,138 +1,188 @@
+# Blue/Green Deployment with NGINX, Docker Compose & Observability
 
-# 🚀 HNG Stage 2 DevOps Task — Blue/Green Deployment with Nginx Upstreams
-
-## 🧩 Overview
-
-This project demonstrates a **Blue/Green deployment architecture** using **Docker Compose** and **Nginx** for zero-downtime service updates.
-
-Two identical Node.js containers (`Blue` and `Green`) run simultaneously behind an Nginx reverse proxy.
-Nginx directs live traffic to one environment (Blue by default) while keeping the other (Green) idle and ready to take over automatically in case of failure.
+**DevOps Learning Project | Zero-Downtime Deployment | Failover | Monitoring & Alerts**
 
 ---
 
-## 🏗️ Architecture Diagram
+## Overview
+
+This project demonstrates a **Blue/Green deployment architecture** implemented using **Docker Compose** and **NGINX upstreams**, extended with **real-time observability and Slack alerts**.
+
+Two identical application instances (Blue and Green) run in parallel behind an NGINX reverse proxy. Traffic is routed to the active environment (Blue by default), while the standby environment (Green) remains available for **instant failover**. If the active service fails, NGINX automatically retries the request against the backup within the **same client request**, ensuring **zero downtime**.
+
+The setup was completed as part of the **HNG DevOps Internship (Stage 2 & Stage 3)** and focuses on **deployment reliability, fault tolerance, and operational visibility**.
+
+---
+
+## Project Objectives
+
+This project was designed to demonstrate the ability to:
+
+* Implement Blue/Green deployment without Kubernetes
+* Configure NGINX upstream failover and retry behavior
+* Achieve zero failed client requests during service failure
+* Parameterize deployments using environment variables
+* Monitor runtime behavior through structured logs
+* Detect failovers and error spikes via automated alerts
+* Document operational response via a runbook
+
+---
+
+## High-Level Architecture
 
 ```
-            +--------------------+
-            |     Nginx Router   | ← Exposed on port 8080
-            +--------------------+
-                  /         \
-                 /           \
-   +-------------------+   +-------------------+
-   |   Blue App (3000) |   |  Green App (3000) |
-   |  X-App-Pool: blue |   | X-App-Pool: green |
-   +-------------------+   +-------------------+
-        localhost:8081         localhost:8082
+Client
+  |
+  v
++--------------------+
+|   NGINX Router     |  :8080
++--------------------+
+        |
+        | (Upstream routing)
+        |
+  -------------------------
+  |                       |
++-------------------+   +-------------------+
+|  Blue App (3000)  |   | Green App (3000)  |
+|  :8081            |   | :8082             |
+|  Primary          |   | Backup            |
++-------------------+   +-------------------+
 ```
 
-### 🔁 Traffic Flow
+---
 
-* Requests come through **port 8080 (Nginx)**.
-* Nginx routes them to the **active pool (Blue)**.
-* If the Blue service becomes unavailable or returns errors, Nginx automatically fails over to **Green**, ensuring **no downtime**.
+## Traffic & Failover Behavior
+
+* **Normal state:**
+  All traffic is routed to **Blue**
+
+* **Failure state:**
+  If Blue returns a timeout or 5xx error:
+
+  * NGINX retries the request against Green
+  * The client still receives a **200 OK**
+  * Traffic continues on Green until recovery
+
+* **Headers forwarded unchanged:**
+
+  * `X-App-Pool: blue | green`
+  * `X-Release-Id: <release-id>`
 
 ---
 
-## ⚙️ Services Summary
+## Services Summary
 
-| Service        | Port | Description                                      |
-| -------------- | ---- | ------------------------------------------------ |
-| `nginx_router` | 8080 | Handles all incoming requests and load balancing |
-| `app_blue`     | 8081 | Primary Blue Node.js app container               |
-| `app_green`    | 8082 | Secondary Green Node.js app container (backup)   |
-
----
-
-## 🧾 Environment Variables
-
-All environment variables are defined in a `.env` file (see `.env.example`).
-
-| Variable           | Description                                                     |
-| ------------------ | --------------------------------------------------------------- |
-| `BLUE_IMAGE`       | Docker image for the Blue app                                   |
-| `GREEN_IMAGE`      | Docker image for the Green app                                  |
-| `ACTIVE_POOL`      | The currently active deployment environment (`blue` or `green`) |
-| `RELEASE_ID_BLUE`  | Version label for Blue                                          |
-| `RELEASE_ID_GREEN` | Version label for Green                                         |
-| `PORT`             | Internal port the Node.js app runs on (default: 3000)           |
+| Service       | Port | Purpose                       |
+| ------------- | ---- | ----------------------------- |
+| nginx_router  | 8080 | Entry point & traffic routing |
+| app_blue      | 8081 | Primary application instance  |
+| app_green     | 8082 | Backup application instance   |
+| alert_watcher | —    | Log monitoring & Slack alerts |
 
 ---
 
-## 🛠️ How to Run Locally
+## Environment Configuration
 
-### 1️⃣ Clone the Repository
+All configuration is driven via environment variables.
+
+Defined in `.env.example`:
+
+| Variable               | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `BLUE_IMAGE`           | Docker image for Blue app                 |
+| `GREEN_IMAGE`          | Docker image for Green app                |
+| `ACTIVE_POOL`          | Initial active pool (blue or green)       |
+| `RELEASE_ID_BLUE`      | Release label for Blue                    |
+| `RELEASE_ID_GREEN`     | Release label for Green                   |
+| `PORT`                 | Internal application port (default: 3000) |
+| `SLACK_WEBHOOK_URL`    | Slack incoming webhook                    |
+| `ERROR_RATE_THRESHOLD` | % of 5xx errors to trigger alert          |
+| `WINDOW_SIZE`          | Sliding window size for error tracking    |
+| `ALERT_COOLDOWN_SEC`   | Alert rate-limit duration                 |
+
+---
+
+## Deployment Flow
+
+1. Docker Compose starts all services
+2. `generate-nginx.sh` builds NGINX config from template
+3. NGINX routes traffic based on `ACTIVE_POOL`
+4. Applications expose health, chaos, and version endpoints
+5. NGINX logs enriched request metadata
+6. Log watcher parses logs in real time
+7. Slack alerts fire on failover or error spikes
+
+---
+
+## Running the Project Locally
+
+### 1. Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/hng-stage2-bluegreen.git
+git clone https://github.com/Jerriemiah/hng-stage2-bluegreen.git
 cd hng-stage2-bluegreen
 ```
 
-### 2️⃣ Create Your `.env` File
+### 2. Create Environment File
 
 ```bash
 cp .env.example .env
 ```
 
-### 3️⃣ Generate Nginx Configuration
+### 3. Generate NGINX Configuration
 
 ```bash
 ./generate-nginx.sh
 ```
 
-### 4️⃣ Start All Containers
+### 4. Start Services
 
 ```bash
 docker compose up -d --build
 ```
 
-### 5️⃣ Verify Setup
+---
+
+## Verification Steps
+
+### Check Active Pool
 
 ```bash
 curl -i http://localhost:8080/version
 ```
 
-Expected output should include:
+Expected headers:
 
 ```
 X-App-Pool: blue
-X-Release-Id: v1-blue
+X-Release-Id: <blue-release>
 ```
 
 ---
 
-## 🧪 Test Automatic Failover
+## Chaos & Failover Testing
 
-### ✅ Step 1 — Check Current Routing
-
-```bash
-for i in {1..5}; do curl -s -i http://localhost:8080/version | grep X-App-Pool; done
-```
-
-Expected output:
-
-```
-X-App-Pool: blue
-```
-
-### ⚠️ Step 2 — Simulate Failure on Blue
+### Simulate Failure on Blue
 
 ```bash
 curl -X POST http://localhost:8081/chaos/start?mode=error
 ```
 
-### 🔄 Step 3 — Observe Failover
+### Observe Automatic Failover
 
 ```bash
-for i in {1..10}; do curl -s -i http://localhost:8080/version | grep X-App-Pool; done
+for i in {1..10}; do
+  curl -s -i http://localhost:8080/version | grep X-App-Pool
+done
 ```
 
-Expected output:
+Expected:
 
 ```
 X-App-Pool: green
 ```
 
-### 🩺 Step 4 — Restore Blue
+### Restore Blue
 
 ```bash
 curl -X POST http://localhost:8081/chaos/stop
@@ -140,31 +190,117 @@ curl -X POST http://localhost:8081/chaos/stop
 
 ---
 
-## 🧹 Tear Down
+## Observability & Monitoring (Stage 3 Extension)
 
-To stop and remove all containers, networks, and volumes:
+### Structured NGINX Logs
 
-```bash
-docker compose down
+NGINX access logs were extended to include:
+
+* Active pool
+* Release ID
+* Upstream address
+* Upstream status
+* Request & upstream latency
+
+Logs are written to a **shared volume** for consumption by the watcher service.
+
+---
+
+### Log Watcher Service
+
+A lightweight Python service (`watcher.py`) monitors NGINX logs in real time and:
+
+* Detects pool changes (Blue ↔ Green)
+* Tracks upstream 5xx error rates
+* Maintains a rolling request window
+* Applies alert cooldowns to prevent spam
+
+---
+
+### Slack Alerts
+
+Alerts are sent to Slack when:
+
+* **Failover occurs**
+* **Error rate exceeds threshold**
+
+Alerts include:
+
+* Timestamp
+* Pool transition
+* Error context
+
+---
+
+## Runbook
+
+Operational response steps are documented in `runbook.md`, including:
+
+* Failover alert handling
+* Error-rate investigation
+* Recovery validation
+* Maintenance mode considerations
+
+---
+
+## Repository Structure
+
+```text
+.
+├── docker-compose.yml
+├── nginx.conf.template
+├── nginx.conf
+├── generate-nginx.sh
+├── watcher.py
+├── watcher.Dockerfile
+├── requirements.txt
+├── runbook.md
+├── .env.example
+├── logs/nginx/
+└── README.md
 ```
 
 ---
 
-## 🧠 Notes
+## Key Learnings
 
-* Images are pulled directly from Docker Hub (`yimikaade/wonderful:devops-stage-two`).
-* The app runs on **Node.js (TypeScript)** internally on port `3000`.
-* Nginx routes to Blue by default and falls back to Green within seconds if Blue fails.
-* The configuration template is dynamically generated using `generate-nginx.sh`.
+* Designing zero-downtime deployments without orchestration platforms
+* Implementing NGINX upstream failover and retries
+* Using logs as a source of truth for observability
+* Detecting incidents without direct application instrumentation
+* Building alerting systems with rate limiting and context
+* Writing operator-friendly runbooks
 
 ---
 
-## 👨‍💻 Author Information
+## Limitations & Future Improvements
 
-**Name:** Jeremiah Inyiama
---
-**Slack Handle:** Jerriemiah
---
-**GitHub:** https://github.com/Jerriemiah/hng-stage2-bluegreen
---
-**Date:** October 2025
+* Manual pool switching could be extended with health-based auto-recovery
+* TLS termination could be added
+* Metrics could be exported to Prometheus
+* CI-based chaos testing could be automated
+
+---
+
+## Why This Project Matters
+
+This project demonstrates **real DevOps thinking**:
+
+* Reliability over convenience
+* Observability over guesswork
+* Automation without over-engineering
+* Clear operational documentation
+
+It complements IT Support experience by showing **infrastructure reliability, failure handling, and production-style operations**.
+
+---
+
+## Author
+
+**Jeremiah Inyiama**
+GitHub: [https://github.com/Jerriemiah](https://github.com/Jerriemiah)
+Slack: Jerriemiah
+
+---
+
+
